@@ -1,4 +1,4 @@
-package ws
+package websocket
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
-func InitialConversation(w http.ResponseWriter, r *http.Request) {
+func (h *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Request) {
 	ws, err := upGrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)

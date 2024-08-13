@@ -51,6 +51,7 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.Handle("/admin/moderator-request", h.authUser(h.authAdmin(http.HandlerFunc(h.adminModeratorRequestPATCH))))
 
 	// websocket
+	// mux.Handle("/conversation", h.authUser(http.HandlerFunc()))
 
 	
 	return h.recoverPanic(h.secureHeaders(h.sessionMiddleware(h.limit(5, 5, mux))))
