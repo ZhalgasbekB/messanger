@@ -5,13 +5,14 @@ import "time"
 type Messanger struct {
 	ID             int       `json:"id"`
 	ConversationID int       `json:"room_id"`
-	UserID         int       `json:"user_id"`
+	UserIDSender   int       `json:"user_id_sender"`
 	Message        string    `json:"message"`
 	CreatedAt      time.Time `json:created_at"`
 }
 
 type Conversations struct {
-	ID int
+	ID        int       `json:"id"`
+	UserID1   int       `json:"user_id_1"`
+	UserID2   int       `json:"user_id_2"`
+	CreatedAt time.Time `json:created_at"`
 }
-
-type Members struct{}
