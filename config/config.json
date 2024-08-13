@@ -1,0 +1,21 @@
+{
+    "port": ":8080",
+    "migrate": "./migrations/init.sql",
+    "tls_cert":"./tls/cert.pem",
+    "tls_key":"./tls/key.pem",
+    "db": {
+        "driver": "sqlite3",
+        "dsn": "forum.sqlite3"
+    },
+    "google_config": {
+        "client_id": "",
+        "client_secret": "",
+        "redirect_url": "https://localhost:8080/google/callback"
+    },
+    "github_config": {
+        "client_id": "",
+        "client_secret": "",
+        "redirect_url": "https://localhost:8080/github/callback"
+    }
+
+}
