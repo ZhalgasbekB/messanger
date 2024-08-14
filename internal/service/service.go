@@ -115,7 +115,7 @@ type Service struct {
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
-		Conversation: messanger.NewMessangerService(repo), // NEW//
+		Conversation: messanger.NewMessangerService(repo), // NEW 
 		User:         user.NewUserService(repo.User),
 		Post:         post.NewPostService(repo),
 		Comment:      comment.NewCommentService(repo.Comment),

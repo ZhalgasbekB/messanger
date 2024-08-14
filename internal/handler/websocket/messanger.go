@@ -17,8 +17,7 @@ var upGrader = websocket.Upgrader{
 func handleConnection(conn *websocket.Conn, id int) {
 	defer conn.Close()
 
-	// define a witch type of send or initial ? 
-	
+	// define a witch type of send or initial ?
 }
 
 func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Request) {
