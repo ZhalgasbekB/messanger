@@ -9,6 +9,7 @@ import (
 
 	"forum/config"
 	"forum/internal/handler"
+	"forum/internal/handler/websocket"
 	"forum/internal/render"
 	repo "forum/internal/repository"
 	"forum/internal/server"
@@ -30,7 +31,9 @@ func RunServer(cfg *config.Config) {
 	if err != nil {
 		log.Fatalf("[ERROR]:failed to parse templates: %s\n", err.Error())
 	}
-	handlers := handler.NewHandler(service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
+	
+	webSocketHandlers := websocket.NewWebHandler(service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
+	handlers := handler.NewHandler(webSocketHandlers, service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
 	srv := new(server.Server)
 
 	go func() {
@@ -38,7 +41,7 @@ func RunServer(cfg *config.Config) {
 			log.Printf("[ERROR]:occured while running http server: %s\n", err.Error())
 		}
 	}()
-
+	
 	go handler.CleanupVisitors()
 
 	log.Println("[OK]:listening on: http://localhost" + cfg.Port)

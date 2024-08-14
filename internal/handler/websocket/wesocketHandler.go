@@ -7,7 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"text/template"
+	"html/template"
 )
 
 type WebSocketHandler struct {

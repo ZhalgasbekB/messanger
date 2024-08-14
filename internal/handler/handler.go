@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"forum/config"
+	"forum/internal/handler/websocket"
 	"forum/internal/service"
 )
 
@@ -16,14 +17,16 @@ type Handler struct {
 	template     *template.Template
 	googleConfig config.GoogleConfig
 	githubConfig config.GithubConfig
+	WebSocketHandler *websocket.WebSocketHandler // NEW
 }
 
-func NewHandler(service *service.Service, tpl *template.Template, googleCfg config.GoogleConfig, githubCfg config.GithubConfig) *Handler {
+func NewHandler(WebSocketHandler *websocket.WebSocketHandler ,service *service.Service, tpl *template.Template, googleCfg config.GoogleConfig, githubCfg config.GithubConfig) *Handler {
 	return &Handler{
 		service:      service,
 		template:     tpl,
 		googleConfig: googleCfg,
 		githubConfig: githubCfg,
+		WebSocketHandler: WebSocketHandler, // NEW
 	}
 }
 

@@ -34,6 +34,16 @@ func handleConnection(conn *websocket.Conn, id int) {
 	// define a witch type of send or initial ???
 }
 
+func (wsh *WebSocketHandler) Broadcasting(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
+		wsh.renderError(w, http.StatusNotFound)
+		return
+	}
+
+	wsh.renderPage(w, "", nil)
+}
+
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		log.Println("Method not allowed")
@@ -73,14 +83,4 @@ func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Reques
 	}
 
 	wsh.renderPage(w, "chats.html", chats)
-}
-
-func (wsh *WebSocketHandler) Broadcasting(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		log.Println("Method not allowed")
-		wsh.renderError(w, http.StatusNotFound)
-		return
-	}
-
-	wsh.renderPage(w, "", nil)
 }
