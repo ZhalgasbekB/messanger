@@ -34,7 +34,25 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
+		wsh.renderError(w, http.StatusNotFound)
+		return
+	}
+}
+
+func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
+		wsh.renderError(w, http.StatusNotFound)
+		return
+	}
 }
 
 func (wsh *WebSocketHandler) Broadcasting(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
+		wsh.renderError(w, http.StatusNotFound)
+		return
+	}
 }
