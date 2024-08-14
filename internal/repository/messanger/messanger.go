@@ -44,11 +44,26 @@ func (m *MessangerSqlite) Conversations() ([]*models.Conversations, error) {
 	return conversations, nil
 }
 
-func (m *MessangerSqlite) ConversationHistory() error {
-	// >>> con, mees  <<<
-	return nil
+func (m *MessangerSqlite) ConversationHistory(conversation_id int) ([]*models.Messanger, error) {
+	var messages []*models.Messanger
+
+	rows, err := m.db.Query("")
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		message := new(models.Messanger)
+		if err := rows.Scan(&message.ID, &message.ConversationID, &message.UserIDSender, &message.Message, &message.CreatedAt); err != nil {
+			return nil, err
+		}
+		messages = append(messages, message)
+	}
+
+	return messages, nil
 }
 
 func (m *MessangerSqlite) SendMessage() error {
+	// ???
 	return nil
 }
