@@ -76,6 +76,7 @@ func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.Messang
 }
 
 func (wsh *WebSocketHandler) broadcasting(conn *websocket.Conn) {
+	
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
