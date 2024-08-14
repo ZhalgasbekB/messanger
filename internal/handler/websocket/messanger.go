@@ -15,12 +15,6 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
-func handleConnection(conn *websocket.Conn, id int) {
-	defer conn.Close()
-
-	// define a witch type of send or initial ???
-}
-
 func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Request) {
 	ws, err := upGrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -32,6 +26,12 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 	id := r.URL.Query().Get("id")
 	fmt.Println(id)
 	/// TAKE TO GIVE CONNECTION
+}
+
+func handleConnection(conn *websocket.Conn, id int) {
+	defer conn.Close()
+
+	// define a witch type of send or initial ???
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
@@ -64,6 +64,15 @@ func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Reques
 		wsh.renderError(w, http.StatusNotFound)
 		return
 	}
+
+	chats, err := wsh.service.Conversation.ConversationsService()
+	if err != nil {
+		log.Println(err)
+		wsh.renderError(w, http.StatusInternalServerError)
+		return
+	}
+
+	wsh.renderPage(w, "", chats)
 }
 
 func (wsh *WebSocketHandler) Broadcasting(w http.ResponseWriter, r *http.Request) {
