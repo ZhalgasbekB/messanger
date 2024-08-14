@@ -50,24 +50,20 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 
 		switch messages.Event {
 		case "initiateConversation":
-			// TO CONNECT FIRST
+			wsh.connectionChat(conn, id, int(messages.Data.RecipientID))
 		case "sendMessage":
-			// TO CONTINUE MESSAGING
+			wsh.sendMessage(conn)
 		}
 	}
 }
 
-func (wsh *WebSocketHandler) ConnectionChat(w http.ResponseWriter, r *http.Request) {
+func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id int) {
 }
 
-func (wsh *WebSocketHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		log.Println("Method not allowed")
-		wsh.renderError(w, http.StatusNotFound)
-		return
-	}
+func (wsh *WebSocketHandler) sendMessage(conn *websocket.Conn) {
+}
 
-	wsh.renderPage(w, "", nil)
+func (wsh *WebSocketHandler) broadcasting(conn *websocket.Conn) {
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
