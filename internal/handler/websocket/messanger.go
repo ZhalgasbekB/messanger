@@ -14,7 +14,7 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
-func (h *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Request) {
+func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Request) {
 	ws, err := upGrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -26,5 +26,5 @@ func (h *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Re
 	fmt.Println(id)
 }
 
-func MessageSend(w http.ResponseWriter, r *http.Request) {
+func (wsh *WebSocketHandler) MessageSend(w http.ResponseWriter, r *http.Request) {
 }

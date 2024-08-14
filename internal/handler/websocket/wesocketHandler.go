@@ -1,3 +1,5 @@
 package websocket
 
-type WebSocketHandler struct{}
+type WebSocketHandler struct{
+	
+}

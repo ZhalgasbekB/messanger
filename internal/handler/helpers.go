@@ -19,23 +19,6 @@ func (h *Handler) getUserFromContext(r *http.Request) *models.User {
 	return user
 }
 
-// func (h *Handler) getPostIdFromURL(path string) (int, error) {
-// 	parts := strings.Split(path, "/")
-// 	if len(parts) != 3 {
-// 		return 0, errors.New("incorrect path")
-// 	}
-// 	rx := regexp.MustCompile(`^[^0,+,-]{1,}\d*$`)
-// 	if !rx.MatchString(parts[2]) {
-// 		return 0, fmt.Errorf("incorrect request vote = %s", parts[2])
-// 	}
-
-// 	postId, err := strconv.Atoi(parts[2])
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return postId, nil
-// }
 
 func (h *Handler) getVote(voteStr string) (int, error) {
 	rx := regexp.MustCompile(`^[^0,+]{1,}\d*$`)
