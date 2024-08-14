@@ -16,3 +16,12 @@ type Conversations struct {
 	UserID2   int       `json:"user_id_2"`
 	CreatedAt time.Time `json:created_at"`
 }
+
+type MessangerDTO struct {
+	Event string `json:"event"`
+	Data  struct {
+		ConversationID uint   `json:"conversationID"`
+		RecipientID    uint   `json:"recipientID"`
+		Content        string `json:"content"`
+	} `json:"data"`
+}

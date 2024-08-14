@@ -1,7 +1,7 @@
 {{template "base" .}}
 
 <section>
-  <input id="conID" value="{{.ConversationID}}" disabled/>
+  <input id="conID" value="{{.ConversationID}}" style="display: none;"/>
   <h2>Conversation with {{.UserID2}}</h2>
   <div class="chat-window" id="chat-window">
     {{range .Messages}}

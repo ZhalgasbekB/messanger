@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/websocket"
 )
@@ -23,6 +22,7 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 	}
 	defer ws.Close()
 
+	// WE CREATE A
 	id := r.URL.Query().Get("id")
 	fmt.Println(id)
 	/// TAKE TO GIVE CONNECTION
@@ -51,21 +51,21 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	idConversation, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil {
-		log.Println(err)
-		wsh.renderError(w, http.StatusBadRequest)
-		return
-	}
+	// idConversation, err := strconv.Atoi(r.URL.Query().Get("id"))
+	// if err != nil {
+	// 	log.Println(err)
+	// 	wsh.renderError(w, http.StatusBadRequest)
+	// 	return
+	// }
 
-	chatHistory, err := wsh.service.Conversation.ConversationHistoryService(idConversation)
-	if err != nil {
-		log.Println(err)
-		wsh.renderError(w, http.StatusInternalServerError)
-		return
-	}
+	// chatHistory, err := wsh.service.Conversation.ConversationHistoryService(idConversation)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	wsh.renderError(w, http.StatusInternalServerError)
+	// 	return
+	// }
 
-	wsh.renderPage(w, "chat.html", chatHistory) /// ADD SOME LOGIC
+	wsh.renderPage(w, "chat.html", nil) /// ADD SOME LOGIC
 }
 
 func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Request) {
@@ -75,12 +75,12 @@ func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	chats, err := wsh.service.Conversation.ConversationsService()
-	if err != nil {
-		log.Println(err)
-		wsh.renderError(w, http.StatusInternalServerError)
-		return
-	}
+	// chats, err := wsh.service.Conversation.ConversationsService()
+	// if err != nil {
+	// 	log.Println(err)
+	// 	wsh.renderError(w, http.StatusInternalServerError)
+	// 	return
+	// }
 
-	wsh.renderPage(w, "chats.html", chats)
+	wsh.renderPage(w, "chats.html", nil)
 }
