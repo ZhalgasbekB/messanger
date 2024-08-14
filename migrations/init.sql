@@ -1,23 +1,24 @@
 
 -- // WEBSOCKET
 
-CREATE TABLE IF NOT EXISTS messages (
-    id INTEGER NOT NULL PRIMARY KEY,
-    conversation_id INTEGER NOT NULL FOREIGN KEY,
-    user_id_sender INTEGER NOT NULL FOREIGN KEY,
-    messages TEXT NOT NULL UNIQUE,
-    create_at TIMESTAMP NOT NULL,
-    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id_sender) REFERENCES users(id) ON DELETE CASCADE,
-);
-
 CREATE TABLE IF NOT EXISTS conversations (
     id INTEGER NOT NULL PRIMARY KEY,
-    user_id_1   NOT NULL UNIQUE FOREIGN KEY,
-    user_id_2   NOT NULL UNIQUE FOREIGN KEY,
-    create_at TIMESTAMP NOT NULL,
+    user_id_1 INTEGER NOT NULL,
+    user_id_2 INTEGER NOT NULL,
+    created_at TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id_1) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id_2) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (user_id_1, user_id_2)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER NOT NULL PRIMARY KEY,
+    conversation_id INTEGER NOT NULL,
+    user_id_sender INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id_sender) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- // WEBSOCKET
