@@ -5,28 +5,28 @@ import (
 	repo "forum/internal/repository"
 )
 
-type ConversationService struct {
+type MessangerService struct {
 	Conversation repo.Conversation
 }
 
-func NewMessangerService(repo repo.Repository) *ConversationService {
-	return &ConversationService{
+func NewMessangerService(repo repo.Conversation) *MessangerService {
+	return &MessangerService{
 		Conversation: repo,
 	}
 }
 
-func (con *ConversationService) ConversationCreateService(conversation *models.Conversations) error {
-	return con.Conversation.ConversationCreate(conversation)
+func (m *MessangerService) ConversationCreateService(conversation *models.Conversations) error {
+	return m.Conversation.ConversationCreate(conversation)
 }
 
-func (con *ConversationService) ConversationsService() ([]*models.Conversations, error) {
-	return con.Conversation.Conversations()
+func (m *MessangerService) ConversationsService() ([]*models.Conversations, error) {
+	return m.Conversation.Conversations()
 }
 
-func (con *ConversationService) ConversationHistoryService(conversation_id int) ([]*models.Messanger, error) {
-	return con.Conversation.ConversationHistory(conversation_id)
+func (m *MessangerService) ConversationHistoryService(conversation_id int) ([]*models.Messanger, error) {
+	return m.Conversation.ConversationHistory(conversation_id)
 }
 
-func (con *ConversationService) SendMessageService(message models.Messanger) error {
-	return con.Conversation.SendMessage(message)
+func (m *MessangerService) SendMessageService(message models.Messanger) error {
+	return m.Conversation.SendMessage(message)
 }

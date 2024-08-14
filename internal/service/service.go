@@ -7,6 +7,7 @@ import (
 	"forum/internal/service/comment"
 	commentvote "forum/internal/service/commentVote"
 	"forum/internal/service/image"
+	"forum/internal/service/messanger"
 	"forum/internal/service/notification"
 	"forum/internal/service/post"
 	postvote "forum/internal/service/postVote"
@@ -14,6 +15,16 @@ import (
 	"forum/internal/service/session"
 	"forum/internal/service/user"
 )
+
+// WEBSOCKET ???
+type Conversation interface {
+	ConversationCreateService(conversation *models.Conversations) error
+	ConversationsService() ([]*models.Conversations, error)
+	ConversationHistoryService(conversation_id int) ([]*models.Messanger, error)
+	SendMessageService(message models.Messanger) error
+}
+
+////
 
 type User interface {
 	Create(user *models.CreateUser) error
@@ -54,6 +65,7 @@ type Session interface {
 	GetByUUID(uuid string) (*models.Session, error)
 	DeleteByUUID(uuid string) error
 }
+
 type Category interface {
 	Create(name string) error
 	GetAll() ([]*models.Category, error)
@@ -67,6 +79,7 @@ type PostVote interface {
 type CommentVote interface {
 	Create(newVote *models.CommentVote) (uint8, error)
 }
+
 type Image interface {
 	CreateByPostId(newImage *models.CreateImage) error
 	GetByPostId(postId int) (*models.Image, error)
@@ -87,6 +100,7 @@ type Notification interface {
 }
 
 type Service struct {
+	Conversation // NEW
 	User
 	Post
 	Comment
@@ -101,6 +115,7 @@ type Service struct {
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
+		Conversation: messanger.NewMessangerService(repo), // NEW//
 		User:         user.NewUserService(repo.User),
 		Post:         post.NewPostService(repo),
 		Comment:      comment.NewCommentService(repo.Comment),
