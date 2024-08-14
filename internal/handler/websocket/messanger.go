@@ -55,7 +55,7 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	wsh.renderPage(w, "", chatHistory) /// ADD SOME LOGIC
+	wsh.renderPage(w, "chat.html", chatHistory) /// ADD SOME LOGIC
 }
 
 func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +72,7 @@ func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	wsh.renderPage(w, "", chats)
+	wsh.renderPage(w, "chats.html", chats)
 }
 
 func (wsh *WebSocketHandler) Broadcasting(w http.ResponseWriter, r *http.Request) {
@@ -81,4 +81,6 @@ func (wsh *WebSocketHandler) Broadcasting(w http.ResponseWriter, r *http.Request
 		wsh.renderError(w, http.StatusNotFound)
 		return
 	}
+
+	wsh.renderPage(w, "", nil)
 }
