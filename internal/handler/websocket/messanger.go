@@ -5,7 +5,6 @@ import (
 	"forum/internal/models"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -63,7 +62,7 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 		log.Println(err)
 		return
 	}
-	// NEED SOME LOGIC 
+	// NEED SOME LOGIC
 	// BUT WHAT ???? BROO
 }
 
@@ -72,11 +71,10 @@ func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.Messang
 		log.Println(err)
 		return
 	}
-	// NEED SOME LOGIC 
+	// NEED SOME LOGIC
 }
 
 func (wsh *WebSocketHandler) broadcasting(conn *websocket.Conn) {
-	
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
@@ -86,21 +84,21 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	idConversation, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil {
-		log.Println(err)
-		wsh.renderError(w, http.StatusBadRequest)
-		return
-	}
+	// idConversation, err := strconv.Atoi(r.URL.Query().Get("id"))
+	// if err != nil {
+	// 	log.Println(err)
+	// 	wsh.renderError(w, http.StatusBadRequest)
+	// 	return
+	// }
 
-	chatHistory, err := wsh.service.Conversation.ConversationHistoryService(idConversation)
-	if err != nil {
-		log.Println(err)
-		wsh.renderError(w, http.StatusInternalServerError)
-		return
-	}
+	// chatHistory, err := wsh.service.Conversation.ConversationHistoryService(idConversation)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	wsh.renderError(w, http.StatusInternalServerError)
+	// 	return
+	// }
 
-	wsh.renderPage(w, "chat.html", chatHistory) /// ADD SOME LOGIC
+	wsh.renderPage(w, "chat.html", nil) /// ADD SOME LOGIC
 }
 
 func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Request) {

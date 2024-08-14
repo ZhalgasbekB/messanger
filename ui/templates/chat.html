@@ -24,7 +24,7 @@
   document.addEventListener("DOMContentLoaded", function() {
     // Replace 'localhost' with your server's address if necessary
     const ws = new WebSocket(`ws://localhost:8080/ws/chat`);
-    
+    console.log(ws)
     // Elements
     const chatWindow = document.getElementById('chat-window');
     const messageForm = document.getElementById('send-message-form');

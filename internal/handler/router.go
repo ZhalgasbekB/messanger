@@ -53,7 +53,7 @@ func (h *Handler) InitRouters() http.Handler {
 	// websocket
 	mux.Handle("/chats", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversations)))
 	mux.Handle("/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversation))) // PARAMETER ID
-	mux.Handle("/ws/chat", h.authUser(http.HandlerFunc(nil)))                                   // THINK
+	mux.Handle("/ws/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.InitialConversation)))                                   // THINK
 
 	return h.recoverPanic(h.secureHeaders(h.sessionMiddleware(h.limit(5, 5, mux))))
 }
