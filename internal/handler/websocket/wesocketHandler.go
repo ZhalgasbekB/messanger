@@ -3,11 +3,12 @@ package websocket
 import (
 	"fmt"
 	"forum/config"
+	"forum/internal/models"
 	"forum/internal/service"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
-	"html/template"
 )
 
 type WebSocketHandler struct {
@@ -72,4 +73,16 @@ func (wsh *WebSocketHandler) getUserInfoFromApi(accessToken string, userInfoURL 
 	}
 
 	return body, nil
+}
+
+type conKay string
+
+var keyUser = conKay("user")
+
+func (wsh *WebSocketHandler) getUserFromContext(r *http.Request) *models.User {
+	user, ok := r.Context().Value(keyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
 }
