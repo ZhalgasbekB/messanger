@@ -14,6 +14,13 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
+func handleConnection(conn *websocket.Conn, id int) {
+	defer conn.Close()
+
+	// define a witch type of send or initial ? 
+	
+}
+
 func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Request) {
 	ws, err := upGrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -24,7 +31,11 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 
 	id := r.URL.Query().Get("id")
 	fmt.Println(id)
+	/// TAKE TO GIVE CONN
 }
 
-func (wsh *WebSocketHandler) MessageSend(w http.ResponseWriter, r *http.Request) {
+func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
+}
+
+func (wsh *WebSocketHandler) Broadcasting(w http.ResponseWriter, r *http.Request) {
 }
