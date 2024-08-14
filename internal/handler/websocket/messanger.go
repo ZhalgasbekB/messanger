@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/websocket"
 )
@@ -17,7 +18,7 @@ var upGrader = websocket.Upgrader{
 func handleConnection(conn *websocket.Conn, id int) {
 	defer conn.Close()
 
-	// define a witch type of send or initial ?
+	// define a witch type of send or initial ???
 }
 
 func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +31,7 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 
 	id := r.URL.Query().Get("id")
 	fmt.Println(id)
-	/// TAKE TO GIVE CONN
+	/// TAKE TO GIVE CONNECTION
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +40,22 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 		wsh.renderError(w, http.StatusNotFound)
 		return
 	}
+
+	idConversation, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		log.Println(err)
+		wsh.renderError(w, http.StatusBadRequest)
+		return
+	}
+
+	chatHistory, err := wsh.service.Conversation.ConversationHistoryService(idConversation)
+	if err != nil {
+		log.Println(err)
+		wsh.renderError(w, http.StatusInternalServerError)
+		return
+	}
+
+	wsh.renderPage(w, "", chatHistory) /// ADD SOME LOGIC
 }
 
 func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Request) {
