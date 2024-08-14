@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -52,15 +53,26 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 		case "initiateConversation":
 			wsh.connectionChat(conn, id, int(messages.Data.RecipientID))
 		case "sendMessage":
-			wsh.sendMessage(conn)
+			wsh.sendMessageW(conn, *messages, 1)
 		}
 	}
 }
 
 func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id int) {
+	if err := wsh.service.Conversation.ConversationCreateService(&models.Conversations{UserID1: id, UserID2: re_id, CreatedAt: time.Now()}); err != nil {
+		log.Println(err)
+		return
+	}
+	// NEED SOME LOGIC 
+	// BUT WHAT ???? BROO
 }
 
-func (wsh *WebSocketHandler) sendMessage(conn *websocket.Conn) {
+func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.MessangerDTO, sender int) {
+	if err := wsh.service.Conversation.SendMessageService(models.Messanger{ConversationID: int(m.Data.ConversationID), UserIDSender: sender, Message: m.Data.Content, CreatedAt: time.Now()}); err != nil {
+		log.Println(err)
+		return
+	}
+	// NEED SOME LOGIC 
 }
 
 func (wsh *WebSocketHandler) broadcasting(conn *websocket.Conn) {
