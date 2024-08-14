@@ -2,19 +2,32 @@ package repository
 
 import (
 	"database/sql"
-
 	"forum/internal/models"
 	"forum/internal/repository/category"
 	"forum/internal/repository/comment"
-	commentvote "forum/internal/repository/commentVote"
 	"forum/internal/repository/image"
+	"forum/internal/repository/messanger"
 	"forum/internal/repository/notification"
 	"forum/internal/repository/post"
-	postvote "forum/internal/repository/postVote"
 	"forum/internal/repository/report"
 	"forum/internal/repository/session"
 	"forum/internal/repository/user"
+
+	commentvote "forum/internal/repository/commentVote"
+
+	postvote "forum/internal/repository/postVote"
 )
+
+// WEBSOCKET
+// ?????
+type Conversation interface {
+	ConversationCreate(conversation *models.Conversations) error
+	Conversations() ([]*models.Conversations, error)
+	ConversationHistory(conversation_id int) ([]*models.Messanger, error)
+	SendMessage(message models.Messanger) error
+}
+
+// WEBSOCKET
 
 type User interface {
 	Create(user *models.CreateUser) error
@@ -97,6 +110,7 @@ type Notification interface {
 }
 
 type Repository struct {
+	Conversation // NEW
 	User
 	Post
 	Comment
@@ -111,6 +125,7 @@ type Repository struct {
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
+		Conversation: messanger.NewMesssangerSqlite(db), // NEW WEBSOCKET
 		User:         user.NewUserSqlite(db),
 		Post:         post.NewPostSqlite(db),
 		Comment:      comment.NewCommentSqlite(db),
