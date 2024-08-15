@@ -2,6 +2,7 @@
 
 <section>
   <input id="conID" value="{{.ConversationID}}" style="display: none;"/>
+  <input id="recID" value="{{.UserID2}}" style="display: none;"/>
   <h2>Conversation with {{.UserID2}}</h2>
   <div class="chat-window" id="chat-window">
     {{range .Messages}}
@@ -26,17 +27,31 @@
     const messageForm = document.getElementById('send-message-form');
     const messageInput = document.getElementById('message-input');
     
-    const conversationID = document.getElementById("conID").value;   
+    // let conversationID = document.getElementById("conID").value;   
+    // let recipientID = document.getElementById("recID").value;   
+    let conversationID =  document.getElementById("conID").value 
+    let recipientID =  document.getElementById("recID").value
 
     ws.onopen = () => {
       console.log('WebSocket connection established');
       ws.send(JSON.stringify({
-        event: 'joinConversation',
+        event: 'initiateConversation',
         data: {
-          conversationID: conversationID // Ensure this variable is set in your template
+          conversationID: conversationID, // Ensure this variable is set in your template
+          recipientID: recipientID
         }
       }));
+      console.log( 
+      {  
+      event: 'initiateConversation',
+        data: {
+          conversationID: conversationID, // Ensure this variable is set in your template
+          recipientID: recipientID
+        }
+      })
     };
+    
+
 
     // Handle incoming messages
     ws.onmessage = (event) => {
@@ -57,9 +72,13 @@
     };
 
     // Handle WebSocket closure
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
+    // ws.onclose = (event) => {
+    //   if (event.wasClean) {
+    //     console.log(`WebSocket connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+    //   } else {
+    //     console.error('WebSocket connection closed unexpectedly');
+    //   }
+    // };
 
     // Handle form submission for sending a message
     messageForm.addEventListener('submit', function(e) {
@@ -71,7 +90,7 @@
           event: 'sendMessage',
           data: {
             conversationID: conversationID, // Ensure this variable is set in your template
-            message: messageContent
+            content: messageContent
           }
         };
         ws.send(JSON.stringify(messageData));

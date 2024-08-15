@@ -15,6 +15,10 @@ func NewMessangerService(repo repo.Conversation) *MessangerService {
 	}
 }
 
+func (m *MessangerService) ConversationService(conversation_id int) (*models.Conversations, error) {
+	return m.Conversation.Conversation1(conversation_id)
+}
+
 func (m *MessangerService) ConversationExistService(id1, id2 int) (int, error) {
 	return m.Conversation.ConversationExist(id1, id2)
 }

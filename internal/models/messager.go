@@ -23,15 +23,6 @@ type ConversationDTO struct {
 	CreatedAt time.Time `json:created_at"`
 }
 
-type MessangerDTO struct {
-	Event string `json:"event"`
-	Data  struct {
-		ConversationID uint   `json:"conversationID"`
-		RecipientID    uint   `json:"recipientID"`
-		Content        string `json:"content"`
-	} `json:"data"`
-}
-
 type Chat struct {
 	ConversationID int
 	User           *User
@@ -49,15 +40,34 @@ type Chats struct {
 	Conversations []*Conversations
 }
 
+type MessangerDTO struct {
+	Event string `json:"event"`
+	Data  struct {
+		ConversationID string   `json:"conversationID"`
+		RecipientID    string   `json:"recipientID"`
+		Content        string `json:"content"`
+	} `json:"data"`
+}
+
 type Data struct {
-	ConversationID uint   `json:"conversationID"`
-	RecipientID    uint   `json:"recipientID"`
+	ConversationID string   `json:"conversationID"`
+	RecipientID    string   `json:"recipientID"`
 	Content        string `json:"content"`
 }
 
-type DataDTO struct{
-	// ConversationID: message.ConversationID,
-	// SenderID:       message.UserIDSender,
-	// Content:        message.Message,
-	// CreatedAt:      message.CreatedAt,
+type Data1 struct {
+	ConversationID int       `json:"conversationID"`
+	SenderID       int       `json:"sender_id"`
+	Content        string    `json:"content"`
+	CreatedAt      time.Time `json:created_at"`
+}
+
+type MessangerDTO1 struct {
+	Event string `json:"event"`
+	Data1 struct {
+		ConversationID int       `json:"conversationID"`
+		SenderID       int       `json:"sender_id"`
+		Content        string    `json:"content"`
+		CreatedAt      time.Time `json:created_at"`
+	} `json:"data"`
 }

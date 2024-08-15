@@ -18,6 +18,7 @@ import (
 
 // WEBSOCKET ???
 type Conversation interface {
+	ConversationService(conversation_id int) (*models.Conversations, error)
 	ConversationExistService(id1, id2 int) (int, error)
 	ConversationCreateService(conversation *models.Conversations) error
 	ConversationsService(user_id int) ([]*models.Conversations, error)
