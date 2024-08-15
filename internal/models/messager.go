@@ -55,7 +55,7 @@ type Data1 struct {
 	ConversationID int       `json:"conversationID"`
 	SenderID       int       `json:"sender_id"`
 	Content        string    `json:"content"`
-	CreatedAt      time.Time `json:created_at"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 type MessangerDTO1 struct {
@@ -64,6 +64,6 @@ type MessangerDTO1 struct {
 		ConversationID int       `json:"conversationID"`
 		SenderID       int       `json:"sender_id"`
 		Content        string    `json:"content"`
-		CreatedAt      time.Time `json:created_at"`
+		CreatedAt      time.Time `json:"created_at"`
 	} `json:"data"`
 }

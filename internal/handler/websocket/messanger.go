@@ -104,16 +104,47 @@ func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.Messang
 	}
 	fmt.Println("BBBBBB")
 
-	wsh.broadcastingMessages(conn, conversation.ID, &message)
+	wsh.broadcastingMessages(conn, conversation, &message)
 }
 
-func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, to_user_id int, message *models.Messanger) {
-	fmt.Println(
-		"DDDDD",
-	)
-	fmt.Println(len(wsh.activeConnections), wsh.activeConnections)
+func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn,  mm *models.Conversations, message *models.Messanger) {
+	// fmt.Println(
+	// 	"DDDDD",
+	// )
+	// fmt.Println(len(wsh.activeConnections), wsh.activeConnections)
 
-	if to_user_conn, ok := wsh.activeConnections[message.UserIDSender]; ok {
+	// if to_user_conn, ok := wsh.activeConnections[message.UserIDSender]; ok {
+	// 	messageToUser := &models.MessangerDTO1{
+	// 		Event: "newMessage",
+	// 		Data1: models.Data1{
+	// 			ConversationID: message.ConversationID,
+	// 			SenderID:       message.UserIDSender,
+	// 			Content:        message.Message,
+	// 			CreatedAt:      time.Now(),
+	// 		},
+	// 	}
+	// 	if err := to_user_conn.WriteJSON(messageToUser); err != nil {
+	// 		log.Println(err)
+	// 	}
+	// }
+
+	// if to_user_conn, ok := wsh.activeConnections[to_user_id]; ok {
+	// 	messageToUser := &models.MessangerDTO1{
+	// 		Event: "newMessage",
+	// 		Data1: models.Data1{
+	// 			ConversationID: message.ConversationID,
+	// 			SenderID:       message.UserIDSender,
+	// 			Content:        message.Message,
+	// 			CreatedAt:      time.Now(),
+	// 		},
+	// 	}
+	// 	fmt.Println(messageToUser)
+	// 	if err := to_user_conn.WriteJSON(messageToUser); err != nil {
+	// 		log.Println(err)
+	// 	}
+	// }
+	// fmt.Println(to_user_id, message.UserIDSender)
+	if toUserConn, ok := wsh.activeConnections[mm.UserID1]; ok {
 		messageToUser := &models.MessangerDTO1{
 			Event: "newMessage",
 			Data1: models.Data1{
@@ -123,13 +154,13 @@ func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, to_user_
 				CreatedAt:      message.CreatedAt,
 			},
 		}
-		fmt.Println(messageToUser)
-		if err := to_user_conn.WriteJSON(messageToUser); err != nil {
+		if err := toUserConn.WriteJSON(messageToUser); err != nil {
 			log.Println(err)
 		}
 	}
-	if to_user_conn, ok := wsh.activeConnections[to_user_id]; ok {
-		messageToUser := &models.MessangerDTO1{
+	// Optionally, send the message back to the sender as well if they are connected
+	if fromUserConn, ok := wsh.activeConnections[mm.UserID2]; ok {
+		messageToSender := &models.MessangerDTO1{
 			Event: "newMessage",
 			Data1: models.Data1{
 				ConversationID: message.ConversationID,
@@ -138,8 +169,7 @@ func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, to_user_
 				CreatedAt:      message.CreatedAt,
 			},
 		}
-		fmt.Println(messageToUser)
-		if err := to_user_conn.WriteJSON(messageToUser); err != nil {
+		if err := fromUserConn.WriteJSON(messageToSender); err != nil {
 			log.Println(err)
 		}
 	}
