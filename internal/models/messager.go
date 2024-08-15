@@ -54,3 +54,10 @@ type Data struct {
 	RecipientID    uint   `json:"recipientID"`
 	Content        string `json:"content"`
 }
+
+type DataDTO struct{
+	// ConversationID: message.ConversationID,
+	// SenderID:       message.UserIDSender,
+	// Content:        message.Message,
+	// CreatedAt:      message.CreatedAt,
+}

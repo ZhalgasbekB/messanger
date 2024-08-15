@@ -16,9 +16,6 @@
   </form>
 </section>
 
-  <!-- <script>
-    // const conversationID = {{.ConversationID}}; // Beileave does it work
-  </script> -->
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -54,7 +51,6 @@
       displayMessage(message.data.SenderID, message.data.Content, message.data.CreatedAt);
     }
   };
-  
     // Handle WebSocket errors
     ws.onerror = (error) => {
       console.error('WebSocket error:', error);

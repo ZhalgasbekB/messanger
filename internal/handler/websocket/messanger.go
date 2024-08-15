@@ -97,11 +97,21 @@ func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.Messang
 	// 	return
 	// }
 
-	// create new
-	// ???
+
+	// create new and broacasting
+	wsh.broadcastingMessages(conn, 1, &message)
 }
 
-func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn) {
+func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, to_user_id int, message *models.Messanger) {
+	if to_user_conn, ok := wsh.activeConnections[to_user_id]; ok {
+		messageToUser := &models.MessangerDTO{
+			Event: "newMessage",
+			Data:  models.Data{},
+		}
+		if err := to_user_conn.WriteJSON(messageToUser); err != nil {
+			log.Println(err)
+		}
+	}
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {
