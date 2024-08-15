@@ -18,6 +18,7 @@ const (
 	conversationHistoryQuery = "SELECT id, user_id_1, user_id_2, create_at FROM conversations;"
 	conversationsQuery       = "SELECT id, conversation_id, user_id_sender, messages, create_at FROM messages WHERE conversation_id = ?;"
 	sendMessaeegQuery        = "INSERT INTO messages (conversation_id, user_id_sender, messages, create_at) VALUES (?, ?, ?, ?);"
+	conversationQuery        = "SELECT * FROM conversations WHERE id= ?;"
 )
 
 func (m *MessangerSqlite) ConversationCreate(conversation *models.Conversations) error {
@@ -44,7 +45,12 @@ func (m *MessangerSqlite) Conversations() ([]*models.Conversations, error) {
 	return conversations, nil
 }
 
-func (m *MessangerSqlite) ConversationHistory(conversation_id int) ([]*models.Messanger, error) {
+func (m *MessangerSqlite) ConversationHistory(conversation_id int) (*models.ChatDTO, error) {
+	var convers models.Conversations
+	if err := m.db.QueryRow(conversationQuery, conversation_id).Scan(&convers.ID, &convers.UserID1, &convers.UserID2, &convers.CreatedAt); err != nil {
+		return nil, err
+	}
+
 	var messages []*models.Messanger
 
 	rows, err := m.db.Query(conversationHistoryQuery)
@@ -60,7 +66,10 @@ func (m *MessangerSqlite) ConversationHistory(conversation_id int) ([]*models.Me
 		messages = append(messages, message)
 	}
 
-	return messages, nil
+	return &models.ChatDTO{
+		Conversation: convers,
+		Messages:     messages,
+	}, nil
 }
 
 func (m *MessangerSqlite) SendMessage(message models.Messanger) error {

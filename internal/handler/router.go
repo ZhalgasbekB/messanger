@@ -51,9 +51,10 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.Handle("/admin/moderator-request", h.authUser(h.authAdmin(http.HandlerFunc(h.adminModeratorRequestPATCH))))
 
 	// websocket
-	mux.Handle("/chats", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversations)))
-	mux.Handle("/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversation))) // PARAMETER ID
-	mux.Handle("/ws/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.InitialConversation)))                                   // THINK
+	mux.Handle("/chats", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversations)))         // THIS HANDLER
+	mux.Handle("/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversation)))           // THIS HANDLER
+	mux.Handle("/ws/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.InitialConversation))) // wEBSOCKET                                    // THINK
 
 	return h.recoverPanic(h.secureHeaders(h.sessionMiddleware(h.limit(5, 5, mux))))
 }
+                                       

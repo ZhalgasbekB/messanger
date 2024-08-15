@@ -23,7 +23,7 @@ import (
 type Conversation interface {
 	ConversationCreate(conversation *models.Conversations) error
 	Conversations() ([]*models.Conversations, error)
-	ConversationHistory(conversation_id int) ([]*models.Messanger, error)
+	ConversationHistory(conversation_id int) (*models.ChatDTO, error)
 	SendMessage(message models.Messanger) error
 }
 

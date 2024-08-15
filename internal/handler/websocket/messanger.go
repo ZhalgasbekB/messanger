@@ -5,6 +5,7 @@ import (
 	"forum/internal/models"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -84,21 +85,38 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// idConversation, err := strconv.Atoi(r.URL.Query().Get("id"))
-	// if err != nil {
-	// 	log.Println(err)
-	// 	wsh.renderError(w, http.StatusBadRequest)
-	// 	return
-	// }
+	user := wsh.getUserFromContext(r)
+	if user.Id == 0 {
+		log.Println("")
+		wsh.renderError(w, http.StatusBadRequest)
+		return
+	}
 
-	// chatHistory, err := wsh.service.Conversation.ConversationHistoryService(idConversation)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	wsh.renderError(w, http.StatusInternalServerError)
-	// 	return
-	// }
+	idConversation, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		log.Println(err)
+		wsh.renderError(w, http.StatusBadRequest)
+		return
+	}
 
-	wsh.renderPage(w, "chat.html", nil) /// ADD SOME LOGIC
+	chatHistory, err := wsh.service.Conversation.ConversationHistoryService(idConversation)
+	if err != nil {
+		log.Println(err)
+		wsh.renderError(w, http.StatusInternalServerError)
+		return
+	}
+
+	var userId2 int
+	if user.Id == chatHistory.Conversation.UserID2 {
+		userId2 = chatHistory.Conversation.UserID1
+	} else {
+		userId2 = chatHistory.Conversation.UserID2
+	}
+
+	wsh.renderPage(w, "chat.html", &models.Chat{
+		UserID2:  userId2,
+		Messages: chatHistory.Messages,
+	}) /// ???
 }
 
 func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Request) {

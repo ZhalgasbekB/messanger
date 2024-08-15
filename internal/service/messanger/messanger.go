@@ -23,7 +23,7 @@ func (m *MessangerService) ConversationsService() ([]*models.Conversations, erro
 	return m.Conversation.Conversations()
 }
 
-func (m *MessangerService) ConversationHistoryService(conversation_id int) ([]*models.Messanger, error) {
+func (m *MessangerService) ConversationHistoryService(conversation_id int) (*models.ChatDTO, error) {
 	return m.Conversation.ConversationHistory(conversation_id)
 }
 

@@ -20,7 +20,7 @@ import (
 type Conversation interface {
 	ConversationCreateService(conversation *models.Conversations) error
 	ConversationsService() ([]*models.Conversations, error)
-	ConversationHistoryService(conversation_id int) ([]*models.Messanger, error)
+	ConversationHistoryService(conversation_id int) (*models.ChatDTO, error)
 	SendMessageService(message models.Messanger) error
 }
 

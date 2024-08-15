@@ -25,3 +25,13 @@ type MessangerDTO struct {
 		Content        string `json:"content"`
 	} `json:"data"`
 }
+
+type Chat struct {
+	UserID2  int          `json:"user_id_2"`
+	Messages []*Messanger `json:"chat_history"`
+}
+
+type ChatDTO struct {
+	Conversation Conversations `json:"conversations"`
+	Messages     []*Messanger  `json:"chat_history"`
+}
