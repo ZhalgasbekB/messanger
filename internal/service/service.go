@@ -19,7 +19,7 @@ import (
 // WEBSOCKET ???
 type Conversation interface {
 	ConversationCreateService(conversation *models.Conversations) error
-	ConversationsService() ([]*models.Conversations, error)
+	ConversationsService(user_id int) ([]*models.Conversations, error)
 	ConversationHistoryService(conversation_id int) (*models.ChatDTO, error)
 	SendMessageService(message models.Messanger) error
 }

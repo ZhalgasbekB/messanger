@@ -37,3 +37,9 @@ type ChatDTO struct {
 	Conversation Conversations `json:"conversations"`
 	Messages     []*Messanger  `json:"chat_history"`
 }
+
+
+type Chats struct  {
+	User *User 
+	Conversations []*Conversations 
+}

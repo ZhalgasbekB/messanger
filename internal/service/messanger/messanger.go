@@ -19,8 +19,8 @@ func (m *MessangerService) ConversationCreateService(conversation *models.Conver
 	return m.Conversation.ConversationCreate(conversation)
 }
 
-func (m *MessangerService) ConversationsService() ([]*models.Conversations, error) {
-	return m.Conversation.Conversations()
+func (m *MessangerService) ConversationsService(user_id int) ([]*models.Conversations, error) {
+	return m.Conversation.Conversations(user_id  )
 }
 
 func (m *MessangerService) ConversationHistoryService(conversation_id int) (*models.ChatDTO, error) {

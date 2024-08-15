@@ -15,7 +15,7 @@ func NewMesssangerSqlite(db *sql.DB) *MessangerSqlite {
 
 const (
 	conversationCreateQuery   = "INSERT INTO conversations (user_id_1, user_id_2, create_at) VALUES (?, ?, ?);"
-	conversationAllQuery      = "SELECT id, user_id_1, user_id_2, created_at FROM conversations;"
+	conversationAllQuery      = "SELECT * FROM conversations WHERE user_id_1 = ? OR user_id_2 = ?;"
 	conversationsHistoryQuery = "SELECT id, conversation_id, user_id_sender, message, created_at FROM messages WHERE conversation_id = ?;"
 	sendMessaeegQuery         = "INSERT INTO messages (conversation_id, user_id_sender, message, created_at) VALUES (?, ?, ?, ?);"
 	conversationQuery         = "SELECT * FROM conversations WHERE id= ?;"
@@ -28,9 +28,9 @@ func (m *MessangerSqlite) ConversationCreate(conversation *models.Conversations)
 	return nil
 }
 
-func (m *MessangerSqlite) Conversations() ([]*models.Conversations, error) {
+func (m *MessangerSqlite) Conversations(user_id int) ([]*models.Conversations, error) {
 	var conversations []*models.Conversations
-	rows, err := m.db.Query(conversationAllQuery)
+	rows, err := m.db.Query(conversationAllQuery, user_id , user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +42,7 @@ func (m *MessangerSqlite) Conversations() ([]*models.Conversations, error) {
 		}
 		conversations = append(conversations, conversation)
 	}
+
 	return conversations, nil
 }
 
