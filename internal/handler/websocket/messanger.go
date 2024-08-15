@@ -75,11 +75,25 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 }
 
 func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.MessangerDTO, sender int) {
-	if err := wsh.service.Conversation.SendMessageService(models.Messanger{ConversationID: int(m.Data.ConversationID), UserIDSender: sender, Message: m.Data.Content, CreatedAt: time.Now()}); err != nil {
+	message := models.Messanger{
+		ConversationID: int(m.Data.ConversationID),
+		UserIDSender:   sender,
+		Message:        m.Data.Content,
+		CreatedAt:      time.Now(),
+	}
+
+	if err := wsh.service.Conversation.SendMessageService(message); err != nil {
 		log.Println(err)
 		return
 	}
-	// NEED SOME LOGIC
+
+	// conversation, err := wsh.service.Conversation.(message.ConversationID)
+	// if err != nil {
+	// 	log.Println("Error retrieving conversation:", err)
+	// 	return
+	// }
+
+	// ???
 }
 
 func (wsh *WebSocketHandler) broadcasting(conn *websocket.Conn) {

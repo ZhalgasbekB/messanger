@@ -9,23 +9,30 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 type WebSocketHandler struct {
-	service      *service.Service
-	template     *template.Template
-	googleConfig config.GoogleConfig
-	githubConfig config.GithubConfig
+	service           *service.Service
+	template          *template.Template
+	googleConfig      config.GoogleConfig
+	githubConfig      config.GithubConfig
+	activeConnections map[int]*websocket.Conn // NEW
 }
 
 func NewWebHandler(service *service.Service, tpl *template.Template, googleCfg config.GoogleConfig, githubCfg config.GithubConfig) *WebSocketHandler {
 	return &WebSocketHandler{
-		service:      service,
-		template:     tpl,
-		googleConfig: googleCfg,
-		githubConfig: githubCfg,
+		service:           service,
+		template:          tpl,
+		googleConfig:      googleCfg,
+		githubConfig:      githubCfg,
+		activeConnections: make(map[int]*websocket.Conn), // NEW
 	}
 }
+
+func add()    {}
+func remove() {}
 
 func (wsh *WebSocketHandler) renderError(w http.ResponseWriter, code int) {
 	w.WriteHeader(code)

@@ -33,8 +33,6 @@
 
     ws.onopen = () => {
       console.log('WebSocket connection established');
-
-      // Optionally, you could send a message to the server to join the conversation
       ws.send(JSON.stringify({
         event: 'joinConversation',
         data: {
