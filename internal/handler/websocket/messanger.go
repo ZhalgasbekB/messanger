@@ -1,7 +1,7 @@
 package websocket
 
 import (
-	"fmt"
+	"database/sql"
 	"forum/internal/models"
 	"log"
 	"net/http"
@@ -32,10 +32,6 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 		return
 	}
 
-	id := r.URL.Query().Get("id")
-	fmt.Println(id, user)
-	/// TAKE TO GIVE CONNECTION
-
 	go wsh.handleConnection(ws, user.Id)
 }
 
@@ -59,12 +55,17 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 }
 
 func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id int) {
-	if err := wsh.service.Conversation.ConversationCreateService(&models.Conversations{UserID1: id, UserID2: re_id, CreatedAt: time.Now()}); err != nil {
+	conversation_id, err := wsh.service.ConversationExistService(id, re_id)
+	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		return
 	}
-	// NEED SOME LOGIC
-	// BUT WHAT ???? BROO
+	if conversation_id == -1 {
+		if err := wsh.service.Conversation.ConversationCreateService(&models.Conversations{UserID1: id, UserID2: re_id, CreatedAt: time.Now()}); err != nil {
+			log.Println(err)
+			return
+		}
+	}
 }
 
 func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.MessangerDTO, sender int) {
@@ -101,11 +102,9 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var userId2 int
+	userId2 := chatHistory.Conversation.UserID2
 	if user.Id == chatHistory.Conversation.UserID2 {
 		userId2 = chatHistory.Conversation.UserID1
-	} else {
-		userId2 = chatHistory.Conversation.UserID2
 	}
 
 	wsh.renderPage(w, "chat.html", &models.Chat{
@@ -133,7 +132,7 @@ func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Reques
 	}
 
 	wsh.renderPage(w, "chats.html", &models.Chats{
-		User:  user,
+		User:          user,
 		Conversations: chats,
 	})
 }

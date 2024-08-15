@@ -17,6 +17,12 @@ type Conversations struct {
 	CreatedAt time.Time `json:created_at"`
 }
 
+type ConversationDTO struct {
+	UserID1   int       `json:"user_id_1"`
+	UserID2   int       `json:"user_id_2"`
+	CreatedAt time.Time `json:created_at"`
+}
+
 type MessangerDTO struct {
 	Event string `json:"event"`
 	Data  struct {
@@ -28,9 +34,9 @@ type MessangerDTO struct {
 
 type Chat struct {
 	ConversationID int
-	User *User
-	UserID2  int          `json:"user_id_2"`
-	Messages []*Messanger `json:"chat_history"`
+	User           *User
+	UserID2        int          `json:"user_id_2"`
+	Messages       []*Messanger `json:"chat_history"`
 }
 
 type ChatDTO struct {
@@ -38,8 +44,7 @@ type ChatDTO struct {
 	Messages     []*Messanger  `json:"chat_history"`
 }
 
-
-type Chats struct  {
-	User *User 
-	Conversations []*Conversations 
+type Chats struct {
+	User          *User
+	Conversations []*Conversations
 }

@@ -21,6 +21,8 @@ import (
 // WEBSOCKET
 // ?????
 type Conversation interface {
+
+	ConversationExist(id1, id2 int) (int, error)
 	ConversationCreate(conversation *models.Conversations) error
 	Conversations(user_id int) ([]*models.Conversations, error)
 	ConversationHistory(conversation_id int) (*models.ChatDTO, error)

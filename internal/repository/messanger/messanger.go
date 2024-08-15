@@ -19,7 +19,17 @@ const (
 	conversationsHistoryQuery = "SELECT id, conversation_id, user_id_sender, message, created_at FROM messages WHERE conversation_id = ?;"
 	sendMessaeegQuery         = "INSERT INTO messages (conversation_id, user_id_sender, message, created_at) VALUES (?, ?, ?, ?);"
 	conversationQuery         = "SELECT * FROM conversations WHERE id= ?;"
+
+	findAChatQuery = `SELECT id FROM conversations WHERE (user_id_1 = ? AND user_id_2 = ?) OR (user_id_1 = ? AND user_id_2 = ?);`
 )
+
+func (m *MessangerSqlite) ConversationExist(id1, id2 int) (int, error) {
+	var conversation_id int
+	if err := m.db.QueryRow(findAChatQuery, id1, id2, id2, id1).Scan(&conversation_id); err != nil {
+		return -1, err
+	}
+	return conversation_id, nil
+}
 
 func (m *MessangerSqlite) ConversationCreate(conversation *models.Conversations) error {
 	if _, err := m.db.Exec(conversationCreateQuery, conversation.UserID1, conversation.UserID2, conversation.CreatedAt); err != nil {
@@ -30,7 +40,7 @@ func (m *MessangerSqlite) ConversationCreate(conversation *models.Conversations)
 
 func (m *MessangerSqlite) Conversations(user_id int) ([]*models.Conversations, error) {
 	var conversations []*models.Conversations
-	rows, err := m.db.Query(conversationAllQuery, user_id , user_id)
+	rows, err := m.db.Query(conversationAllQuery, user_id, user_id)
 	if err != nil {
 		return nil, err
 	}
