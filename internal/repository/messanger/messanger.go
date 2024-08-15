@@ -14,11 +14,11 @@ func NewMesssangerSqlite(db *sql.DB) *MessangerSqlite {
 }
 
 const (
-	conversationCreateQuery  = "INSERT INTO conversations (user_id_1, user_id_2, create_at) VALUES (?, ?, ?);"
-	conversationAllQuery = "SELECT id, user_id_1, user_id_2, created_at FROM conversations;"
-	conversationsHistoryQuery       = "SELECT id, conversation_id, user_id_sender, message, created_at FROM messages WHERE conversation_id = ?;"
-	sendMessaeegQuery        = "INSERT INTO messages (conversation_id, user_id_sender, message, created_at) VALUES (?, ?, ?, ?);"
-	conversationQuery        = "SELECT * FROM conversations WHERE id= ?;"
+	conversationCreateQuery   = "INSERT INTO conversations (user_id_1, user_id_2, create_at) VALUES (?, ?, ?);"
+	conversationAllQuery      = "SELECT id, user_id_1, user_id_2, created_at FROM conversations;"
+	conversationsHistoryQuery = "SELECT id, conversation_id, user_id_sender, message, created_at FROM messages WHERE conversation_id = ?;"
+	sendMessaeegQuery         = "INSERT INTO messages (conversation_id, user_id_sender, message, created_at) VALUES (?, ?, ?, ?);"
+	conversationQuery         = "SELECT * FROM conversations WHERE id= ?;"
 )
 
 func (m *MessangerSqlite) ConversationCreate(conversation *models.Conversations) error {
