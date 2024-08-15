@@ -60,7 +60,7 @@
           conversationID = message.data.conversationID; 
           console.log(conversationID)
       } else if (message.event === 'newMessage') {
-          displayMessage(message.data.SenderID, message.data.Content, message.data.CreatedAt);
+          displayMessage(message.data.sender_id, message.data.content, message.data.created_at);
       }
     };
     // Handle WebSocket errors
@@ -76,6 +76,13 @@
     //     console.error('WebSocket connection closed unexpectedly');
     //   }
     // };
+    ws.onclose = (event) => {
+      if (event.code === 1001) {
+        console.log('WebSocket connection closed: Going away (Code 1001)');
+      } else {
+        console.error('WebSocket connection closed unexpectedly:', event);
+      }
+    };
 
     // Handle form submission for sending a message
     messageForm.addEventListener('submit', function(e) {

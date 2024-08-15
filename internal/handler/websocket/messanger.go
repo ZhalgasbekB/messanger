@@ -45,9 +45,8 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 			log.Println(err)
 			break
 		}
-		fmt.Println(messages)
+		fmt.Println(messages, "r!")
 
-		// aa, _ := strconv.Atoi(messages.Data.RecipientID)
 		switch messages.Event {
 		case "initiateConversation":
 			wsh.connectionChat(conn, id, messages.Data.RecipientID) // ????
@@ -71,7 +70,6 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 		}
 	}
 
-
 	response := models.MessangerDTO{
 		Event: "conversationInitiated",
 		Data: &models.Data{
@@ -84,7 +82,7 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 }
 
 func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.MessangerDTO, sender int) {
-	fmt.Println(m.Data.Content, m.Data.ConversationID )
+	fmt.Println(m.Data.Content, m.Data.ConversationID, "EEEECHECK")
 
 	message := models.Messanger{
 		ConversationID: m.Data.ConversationID,
@@ -98,16 +96,38 @@ func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.Messang
 		return
 	}
 
+	fmt.Println("AAAAA")
 	conversation, err := wsh.service.ConversationService(message.ConversationID)
 	if err != nil {
 		log.Println("Error retrieving conversation:", err)
 		return
 	}
+	fmt.Println("BBBBBB")
 
 	wsh.broadcastingMessages(conn, conversation.ID, &message)
 }
 
 func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, to_user_id int, message *models.Messanger) {
+	fmt.Println(
+		"DDDDD",
+	)
+	fmt.Println(len(wsh.activeConnections), wsh.activeConnections)
+
+	if to_user_conn, ok := wsh.activeConnections[message.UserIDSender]; ok {
+		messageToUser := &models.MessangerDTO1{
+			Event: "newMessage",
+			Data1: models.Data1{
+				ConversationID: message.ConversationID,
+				SenderID:       message.UserIDSender,
+				Content:        message.Message,
+				CreatedAt:      message.CreatedAt,
+			},
+		}
+		fmt.Println(messageToUser)
+		if err := to_user_conn.WriteJSON(messageToUser); err != nil {
+			log.Println(err)
+		}
+	}
 	if to_user_conn, ok := wsh.activeConnections[to_user_id]; ok {
 		messageToUser := &models.MessangerDTO1{
 			Event: "newMessage",
@@ -118,6 +138,7 @@ func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, to_user_
 				CreatedAt:      message.CreatedAt,
 			},
 		}
+		fmt.Println(messageToUser)
 		if err := to_user_conn.WriteJSON(messageToUser); err != nil {
 			log.Println(err)
 		}

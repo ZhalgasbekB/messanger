@@ -32,11 +32,11 @@ func (m *MessangerSqlite) ConversationExist(id1, id2 int) (int, error) {
 }
 
 func (m *MessangerSqlite) Conversation1(conversation_id int) (*models.Conversations, error) {
-	var conversation *models.Conversations
+	var conversation models.Conversations
 	if err := m.db.QueryRow(conversationQuery, conversation_id).Scan(&conversation.ID, &conversation.UserID1, &conversation.UserID2, &conversation.CreatedAt); err != nil {
 		return nil, err
 	}
-	return conversation, nil
+	return &conversation, nil
 }
 
 func (m *MessangerSqlite) ConversationCreate(conversation *models.Conversations) error {
