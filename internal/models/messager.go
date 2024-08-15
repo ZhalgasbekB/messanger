@@ -42,16 +42,12 @@ type Chats struct {
 
 type MessangerDTO struct {
 	Event string `json:"event"`
-	Data  struct {
-		ConversationID string   `json:"conversationID"`
-		RecipientID    string   `json:"recipientID"`
-		Content        string `json:"content"`
-	} `json:"data"`
+	Data  *Data  `json:"data"`
 }
 
 type Data struct {
-	ConversationID string   `json:"conversationID"`
-	RecipientID    string   `json:"recipientID"`
+	ConversationID int    `json:"conversationID"`
+	RecipientID    int    `json:"recipientID"`
 	Content        string `json:"content"`
 }
 

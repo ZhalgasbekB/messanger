@@ -47,10 +47,10 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 		}
 		fmt.Println(messages)
 
-		aa, _ := strconv.Atoi(messages.Data.RecipientID)
+		// aa, _ := strconv.Atoi(messages.Data.RecipientID)
 		switch messages.Event {
 		case "initiateConversation":
-			wsh.connectionChat(conn, id, aa) // ????
+			wsh.connectionChat(conn, id, messages.Data.RecipientID) // ????
 		case "sendMessage":
 			wsh.sendMessageW(conn, *messages, id) // ???
 		}
@@ -71,12 +71,11 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 		}
 	}
 
-	aa := strconv.Itoa(conversation_id)
 
 	response := models.MessangerDTO{
 		Event: "conversationInitiated",
-		Data: models.Data{
-			ConversationID: aa,
+		Data: &models.Data{
+			ConversationID: conversation_id,
 		},
 	}
 	if err := conn.WriteJSON(response); err != nil {
@@ -85,11 +84,10 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 }
 
 func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.MessangerDTO, sender int) {
-	fmt.Println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs")
-	aa, _ := strconv.Atoi(m.Data.ConversationID)
+	fmt.Println(m.Data.Content, m.Data.ConversationID )
 
 	message := models.Messanger{
-		ConversationID: aa,
+		ConversationID: m.Data.ConversationID,
 		UserIDSender:   sender,
 		Message:        m.Data.Content,
 		CreatedAt:      time.Now(),
