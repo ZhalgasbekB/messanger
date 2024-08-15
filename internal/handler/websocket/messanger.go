@@ -25,7 +25,7 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 	}
 	defer ws.Close()
 
-	user := wsh.getUserFromContext(r)
+	user := getUserFromContext(r)
 	if user.Id == 0 {
 		ws.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Unauthorized"))
 		ws.Close()
@@ -85,9 +85,9 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	user := wsh.getUserFromContext(r)
-	if user.Id == 0 {
-		log.Println("")
+	user := getUserFromContext(r)
+	fmt.Println(user)
+	if user.Id == 0 || user == nil {
 		wsh.renderError(w, http.StatusBadRequest)
 		return
 	}
@@ -112,8 +112,11 @@ func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request
 	} else {
 		userId2 = chatHistory.Conversation.UserID2
 	}
+	fmt.Println(userId2, chatHistory)
 
 	wsh.renderPage(w, "chat.html", &models.Chat{
+		ConversationID: chatHistory.Conversation.ID,
+		User: user,
 		UserID2:  userId2,
 		Messages: chatHistory.Messages,
 	}) /// ???

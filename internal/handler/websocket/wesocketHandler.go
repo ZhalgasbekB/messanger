@@ -77,10 +77,10 @@ func (wsh *WebSocketHandler) getUserInfoFromApi(accessToken string, userInfoURL 
 
 type conKay string
 
-var keyUser = conKay("user")
+var KeyUser = conKay("user")
 
-func (wsh *WebSocketHandler) getUserFromContext(r *http.Request) *models.User {
-	user, ok := r.Context().Value(keyUser).(*models.User)
+func getUserFromContext(r *http.Request) *models.User {
+	user, ok := r.Context().Value(KeyUser).(*models.User) // Use keyUser here
 	if !ok {
 		return nil
 	}

@@ -3,22 +3,21 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"forum/internal/handler/websocket"
+	"forum/internal/models"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
-
-	"forum/internal/models"
 )
 
 func (h *Handler) getUserFromContext(r *http.Request) *models.User {
-	user, ok := r.Context().Value(keyUser).(*models.User)
+	user, ok := r.Context().Value(websocket.KeyUser).(*models.User)
 	if !ok {
 		return nil
 	}
 	return user
 }
-
 
 func (h *Handler) getVote(voteStr string) (int, error) {
 	rx := regexp.MustCompile(`^[^0,+]{1,}\d*$`)

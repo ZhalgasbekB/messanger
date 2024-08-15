@@ -27,6 +27,8 @@ type MessangerDTO struct {
 }
 
 type Chat struct {
+	ConversationID int
+	User *User
 	UserID2  int          `json:"user_id_2"`
 	Messages []*Messanger `json:"chat_history"`
 }

@@ -2,18 +2,14 @@ package handler
 
 import (
 	"context"
+	"forum/internal/handler/websocket"
+	"forum/internal/models"
+	"forum/pkg"
 	"log"
 	"net"
 	"net/http"
 	"time"
-
-	"forum/internal/models"
-	"forum/pkg"
-)
-
-type conKay string
-
-var keyUser = conKay("user")
+) 
 
 func (h *Handler) sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -47,10 +43,10 @@ func (h *Handler) sessionMiddleware(next http.Handler) http.Handler {
 			h.renderError(w, http.StatusInternalServerError) // 500
 			return
 		}
-		
+
 		user.CountNotice = count
 
-		ctx := context.WithValue(r.Context(), keyUser, user)
+		ctx := context.WithValue(r.Context(), websocket.KeyUser, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
