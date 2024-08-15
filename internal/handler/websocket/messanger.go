@@ -31,7 +31,11 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 }
 
 func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
-	defer conn.Close()
+	defer func() {
+		conn.Close()
+		wsh.remove(id)
+	}()
+	wsh.add(id, conn)
 
 	for {
 		var messages *models.MessangerDTO
@@ -93,10 +97,11 @@ func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.Messang
 	// 	return
 	// }
 
+	// create new
 	// ???
 }
 
-func (wsh *WebSocketHandler) broadcasting(conn *websocket.Conn) {
+func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn) {
 }
 
 func (wsh *WebSocketHandler) Conversation(w http.ResponseWriter, r *http.Request) {

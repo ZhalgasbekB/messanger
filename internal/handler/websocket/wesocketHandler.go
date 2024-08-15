@@ -31,8 +31,13 @@ func NewWebHandler(service *service.Service, tpl *template.Template, googleCfg c
 	}
 }
 
-func add()    {}
-func remove() {}
+func (wsh *WebSocketHandler) add(user_id int, conn *websocket.Conn) {
+	wsh.activeConnections[user_id] = conn
+}
+
+func (wsh *WebSocketHandler) remove(user_id int) {
+	delete(wsh.activeConnections, user_id)
+}
 
 func (wsh *WebSocketHandler) renderError(w http.ResponseWriter, code int) {
 	w.WriteHeader(code)

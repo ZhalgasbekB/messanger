@@ -43,10 +43,18 @@
 
     // Handle incoming messages
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      displayMessage(message.UserIDSender, message.Message, message.CreatedAt);
-    };
+    const message = JSON.parse(event.data);
 
+    if (message.event === 'conversationInitiated') {
+      // Handle the conversation initiated event
+      console.log('Conversation initiated with ID:', message.data.ConversationID);
+      conversationID = message.data.ConversationID; // Update conversation ID if necessary
+    } else if (message.event === 'newMessage') {
+      // Handle incoming messages
+      displayMessage(message.data.SenderID, message.data.Content, message.data.CreatedAt);
+    }
+  };
+  
     // Handle WebSocket errors
     ws.onerror = (error) => {
       console.error('WebSocket error:', error);
