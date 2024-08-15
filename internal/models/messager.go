@@ -48,3 +48,9 @@ type Chats struct {
 	User          *User
 	Conversations []*Conversations
 }
+
+type Data struct {
+	ConversationID uint   `json:"conversationID"`
+	RecipientID    uint   `json:"recipientID"`
+	Content        string `json:"content"`
+}

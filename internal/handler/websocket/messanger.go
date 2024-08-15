@@ -26,11 +26,6 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 	defer ws.Close()
 
 	user := getUserFromContext(r)
-	if user.Id == 0 {
-		ws.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Unauthorized"))
-		ws.Close()
-		return
-	}
 
 	go wsh.handleConnection(ws, user.Id)
 }
@@ -60,11 +55,22 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 		log.Println(err)
 		return
 	}
+
 	if conversation_id == -1 {
 		if err := wsh.service.Conversation.ConversationCreateService(&models.Conversations{UserID1: id, UserID2: re_id, CreatedAt: time.Now()}); err != nil {
 			log.Println(err)
 			return
 		}
+	}
+
+	response := models.MessangerDTO{
+		Event: "conversationInitiated",
+		Data: models.Data{
+			ConversationID: uint(conversation_id),
+		},
+	}
+	if err := conn.WriteJSON(response); err != nil {
+		log.Println("Error sending confirmation:", err)
 	}
 }
 
