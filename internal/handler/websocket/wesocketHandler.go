@@ -45,10 +45,7 @@ func (wsh *WebSocketHandler) renderError(w http.ResponseWriter, code int) {
 	err := wsh.template.ExecuteTemplate(w, "error.html", struct {
 		Code int
 		Text string
-	}{
-		Code: code,
-		Text: http.StatusText(code),
-	})
+	}{Code: code, Text: http.StatusText(code)})
 	if err != nil {
 		log.Printf("ExecuteTemplate:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
