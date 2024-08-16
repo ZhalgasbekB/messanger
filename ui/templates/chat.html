@@ -27,8 +27,6 @@
     const messageForm = document.getElementById('send-message-form');
     const messageInput = document.getElementById('message-input');
     
-    // let conversationID = document.getElementById("conID").value;   
-    // let recipientID = document.getElementById("recID").value;   
     let conversationID = parseInt(document.getElementById("conID").value, 10);
     let recipientID =  parseInt(document.getElementById("recID").value, 10);
 
@@ -69,7 +67,6 @@
       }
     };
 
-    // Handle form submission for sending a message
     messageForm.addEventListener('submit', function(e) {
       e.preventDefault();
 
