@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/internal/models"
 	"log"
 	"net/http"
@@ -40,18 +39,15 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 	for {
 		var messages *models.MessangerDTO
 		if err := conn.ReadJSON(&messages); err != nil {
-			fmt.Println(messages)
-			fmt.Println(err)
 			log.Println(err)
 			break
 		}
-		fmt.Println(messages, "r!")
 
 		switch messages.Event {
 		case "initiateConversation":
 			wsh.connectionChat(conn, id, messages.Data.RecipientID) // ????
 		case "sendMessage":
-			wsh.sendMessageW(conn, *messages, id) // ???
+			wsh.sendMessage(conn, *messages, id) // ???
 		}
 	}
 }
@@ -81,9 +77,7 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 	}
 }
 
-func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.MessangerDTO, sender int) {
-	fmt.Println(m.Data.Content, m.Data.ConversationID, "EEEECHECK")
-
+func (wsh *WebSocketHandler) sendMessage(conn *websocket.Conn, m models.MessangerDTO, sender int) {
 	message := models.Messanger{
 		ConversationID: m.Data.ConversationID,
 		UserIDSender:   sender,
@@ -96,13 +90,11 @@ func (wsh *WebSocketHandler) sendMessageW(conn *websocket.Conn, m models.Messang
 		return
 	}
 
-	fmt.Println("AAAAA")
 	conversation, err := wsh.service.ConversationService(message.ConversationID)
 	if err != nil {
 		log.Println("Error retrieving conversation:", err)
 		return
 	}
-	fmt.Println("BBBBBB")
 
 	wsh.broadcastingMessages(conn, conversation, &message)
 }
@@ -122,7 +114,7 @@ func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, mm *mode
 			log.Println(err)
 		}
 	}
-	
+
 	if fromUserConn, ok := wsh.activeConnections[mm.UserID2]; ok {
 		messageToSender := &models.MessangerDTO1{
 			Event: "newMessage",
