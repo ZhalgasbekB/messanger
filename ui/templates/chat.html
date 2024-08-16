@@ -54,7 +54,7 @@
           displayMessage(message.data.sender_id, message.data.content, message.data.created_at);
       }
     };
-    // Handle WebSocket errors
+
     ws.onerror = (error) => {
        console.error('WebSocket error:', error);
     };
