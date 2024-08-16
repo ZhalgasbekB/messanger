@@ -45,9 +45,9 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 
 		switch messages.Event {
 		case "initiateConversation":
-			wsh.connectionChat(conn, id, messages.Data.RecipientID) // ????
+			wsh.connectionChat(conn, id, messages.Data.RecipientID)
 		case "sendMessage":
-			wsh.sendMessage(conn, *messages, id) // ???
+			wsh.sendMessage(conn, *messages, id)
 		}
 	}
 }
