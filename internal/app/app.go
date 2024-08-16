@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"forum/config"
-	"forum/internal/handler"
+	"forum/internal/handler/http"
 	"forum/internal/handler/websocket"
 	"forum/internal/render"
 	repo "forum/internal/repository"
@@ -21,19 +21,22 @@ func RunServer(cfg *config.Config) {
 	if err != nil {
 		log.Fatalf("[ERROR]:failed to initialize db: %s\n", err.Error())
 	}
+
 	err = repo.CreateTable(db, cfg.Migrate)
 	if err != nil {
 		log.Fatalf("[ERROR]:failed creation table: %s\n", err.Error())
 	}
+
 	repo := repo.NewRepository(db)
 	service := service.NewService(repo)
+
 	tpl, err := render.NewTemplate()
 	if err != nil {
 		log.Fatalf("[ERROR]:failed to parse templates: %s\n", err.Error())
 	}
-	
+
 	webSocketHandlers := websocket.NewWebHandler(service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
-	handlers := handler.NewHandler(webSocketHandlers, service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
+	handlers := http.NewHandler(webSocketHandlers, service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
 	srv := new(server.Server)
 
 	go func() {
@@ -41,8 +44,8 @@ func RunServer(cfg *config.Config) {
 			log.Printf("[ERROR]:occured while running http server: %s\n", err.Error())
 		}
 	}()
-	
-	go handler.CleanupVisitors()
+
+	go http.CleanupVisitors()
 
 	log.Println("[OK]:listening on: http://localhost" + cfg.Port)
 

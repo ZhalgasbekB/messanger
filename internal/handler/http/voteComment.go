@@ -1,4 +1,4 @@
-package handler
+package http
 
 import (
 	"fmt"
@@ -9,50 +9,57 @@ import (
 	"forum/internal/models"
 )
 
-func (h *Handler) createPostVotePOST(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/post/vote/create" {
-		log.Printf("createPostVotePOST:StatusNotFound:%s\n", r.URL.Path)
+func (h *Handler) createCommentVotePOST(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/comment/vote/create" {
+		log.Printf("createCommentVotePOST:StatusNotFound:%s\n", r.URL.Path)
 		h.renderError(w, http.StatusNotFound) // 404
 		return
 	}
 
 	if r.Method != http.MethodPost {
-		log.Printf("createPostVotePOST:StatusMethodNotAllowed:%s\n", r.Method)
+		log.Printf("createCommentVotePOST:StatusMethodNotAllowed:%s\n", r.Method)
 		h.renderError(w, http.StatusMethodNotAllowed) // 405
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		log.Printf("createPostVotePOST:ParseForm:%s\n", err.Error())
+		log.Printf("createCommentVotePOST:ParseForm:%s\n", err.Error())
 		h.renderError(w, http.StatusBadRequest) // 400
 		return
 	}
 
 	vote, err := h.getVote(r.Form.Get("vote"))
 	if err != nil {
-		log.Printf("createPostVotePOST:getVote:%s\n", err.Error())
+		log.Printf("createCommentVotePOST:getVote:%s\n", err.Error())
 		h.renderError(w, http.StatusBadRequest) // 400
 		return
 	}
 
 	postId, err := h.getIntFromForm(r.Form.Get("post_id"))
 	if err != nil {
-		log.Printf("createPostVotePOST:getPostIdFromForm:%s\n", err.Error())
+		log.Printf("createCommentVotePOST:getIntFromForm():%s\n", err.Error())
+		h.renderError(w, http.StatusBadRequest) // 400
+		return
+	}
+
+	commentId, err := h.getIntFromForm(r.Form.Get("comment_id"))
+	if err != nil {
+		log.Printf("createCommentVotePOST:getIntFromForm():%s\n", err.Error())
 		h.renderError(w, http.StatusBadRequest) // 400
 		return
 	}
 
 	user := h.getUserFromContext(r)
 
-	newVote := &models.PostVote{
-		PostId: postId,
-		UserId: user.Id,
-		Vote:   vote,
+	newVote := &models.CommentVote{
+		CommentId: commentId,
+		UserId:    user.Id,
+		Vote:      vote,
 	}
 
-	forNotic, err := h.service.PostVote.Create(newVote)
+	forNotic, err := h.service.CommentVote.Create(newVote)
 	if err != nil {
-		log.Printf("createPostVotePOST:PostVote.Create:%s\n", err.Error())
+		log.Printf("createCommentVotePOST:Create:%s\n", err.Error())
 		if err.Error() == models.IncorRequest {
 			h.renderError(w, http.StatusBadRequest) // 400
 			return
@@ -62,10 +69,11 @@ func (h *Handler) createPostVotePOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if forNotic%2 != 0 {
+		//delete notic for vote
 		formDel := &models.DeleteNotification{
 			PostId: postId,
 			UserId: user.Id,
-			Type:   models.NoticeTypePostVote,
+			Type:   models.NoticeTypeCommentVote,
 			Method: models.DelNoticByUser,
 		}
 
@@ -84,12 +92,13 @@ func (h *Handler) createPostVotePOST(w http.ResponseWriter, r *http.Request) {
 	if forNotic >= models.VoteSignalCreate {
 		//create notic for vote
 		newNotic := &models.Notification{
-			PostId:   postId,
-			UserId:   user.Id,
-			UserName: user.Name,
-			Vote:     vote,
-			Type:     models.NoticeTypePostVote,
-			CreateAt: time.Now(),
+			PostId:    postId,
+			CommentId: commentId,
+			UserId:    user.Id,
+			UserName:  user.Name,
+			Vote:      vote,
+			Type:      models.NoticeTypeCommentVote,
+			CreateAt:  time.Now(),
 		}
 
 		err = h.service.Notification.Create(newNotic)
