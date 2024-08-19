@@ -3,6 +3,7 @@
 <section>
   <input id="conID" value="{{.ConversationID}}" style="display: none;"/>
   <input id="recID" value="{{.UserID2}}" style="display: none;"/>
+
   <h2>Conversation with {{.UserID2}}</h2>
   <div class="chat-window" id="chat-window">
     {{range .Messages}}
@@ -11,47 +12,55 @@
     </div>
     {{end}}
   </div>
-  <form id="send-message-form">
-    <textarea id="message-input" name="message" placeholder="Type your message here..." required></textarea>
-    <input type="submit" value="Send">
-  </form>
+
+  <div id="chat-controls">
+    <form id="send-message-form">
+      <textarea id="message-input" name="message" placeholder="Type your message here..." required></textarea>
+      <input type="submit" value="Send">
+    </form>
+    <button id="close-chat-button">Exit Chat</button>
+  </div>
 </section>
 
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const ws = new WebSocket(`ws://localhost:8080/ws/chat`);
-    console.log(ws)
-
     const chatWindow = document.getElementById('chat-window');
     const messageForm = document.getElementById('send-message-form');
     const messageInput = document.getElementById('message-input');
-    
+    const closeChatButton = document.getElementById('close-chat-button');
+
     let conversationID = parseInt(document.getElementById("conID").value, 10);
     let recipientID =  parseInt(document.getElementById("recID").value, 10);
+
+
+    const ws = new WebSocket(`ws://localhost:8080/ws/chat`);
 
     ws.onopen = () => {
       console.log('WebSocket connection established');
       ws.send(JSON.stringify({
         event: 'initiateConversation',
         data: {
-          conversationID: conversationID, // Ensure this variable is set in your template
+          conversationID: conversationID,
           recipientID: recipientID
         }
-      })) 
+      }))
     };
-    
-
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.event === 'conversationInitiated') {
           console.log('Conversation initiated with ID:', message.data.conversationID);
-          conversationID = message.data.conversationID; 
+          conversationID = message.data.conversationID;
           console.log(conversationID)
       } else if (message.event === 'newMessage') {
-          console.log(message)
           displayMessage(message.data.sender_id, message.data.content, message.data.created_at);
+          broadcastLastMessage(message.data.content)
+      } else if (message.event === "Ping") {
+         console.log("CHECK")
+          ws.send(JSON.stringify({
+            event: "Pong"
+          }))
       }
     };
 
@@ -67,32 +76,71 @@
       }
     };
 
-    messageForm.addEventListener('submit', function(e) {
+
+    closeChatButton.addEventListener("click", function () {
+          ws.send(JSON.stringify({event: "closeConnection",}))
+          ws.close();
+          window.location.href = '/chats';
+    })
+
+    messageForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
       const messageContent = messageInput.value.trim();
       if (messageContent) {
-        const messageData = {
-          event: 'sendMessage',
-          data: {
-            conversationID: conversationID, // Ensure this variable is set in your template
-            content: messageContent
-          }
-        };
+          const messageData = {
+            event: 'sendMessage',
+            data: {
+              conversationID: conversationID, // Ensure this variable is set in your template
+              content: messageContent
+            }
+          };
         ws.send(JSON.stringify(messageData));
         messageInput.value = ''; // Clear the input
       }
     });
 
-    // Function to display messages in the chat window
     function displayMessage(userIDSender, message, createdAt) {
       const messageElement = document.createElement('div');
       messageElement.className = 'message';
       messageElement.innerHTML = `<strong>${userIDSender}:</strong> ${message} <span class="time-post">${createdAt}</span>`;
       chatWindow.appendChild(messageElement);
-      chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to the bottom
+      chatWindow.scrollTop = chatWindow.scrollHeight;
     }
+    // Write a new WEBSOCKET FOR CHECKING NEW MESSAGES
+    const ws2 = new WebSocket("ws://localhost:8080/ws/chats")
+    console.log(ws2)
+
+    ws2.onopen = () => {
+      console.log("Websocket 2 connection established")
+    }
+
+    function broadcastLastMessage(data1) {
+      const message = {
+        event: "lastMessage",
+        data: {
+          conversation_id: conversationID,
+          user_id: recipientID,
+          last_message: data1
+        }
+      };
+      console.log(message)
+      ws2.send(JSON.stringify(message));
+    }
+
+    ws2.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws2.onclose = (event) => {
+      if (event.code === 1001) {
+        console.log('WebSocket connection closed: Going away (Code 1001)');
+      } else {
+        console.error('WebSocket connection closed unexpectedly:', event);
+      }
+    };
   });
 </script>
 
 {{template "footer" .}}
+

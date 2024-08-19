@@ -17,6 +17,10 @@ import (
 )
 
 // WEBSOCKET ???
+type PeopleService interface {
+	ListOfUsersToChatService() (*[]models.User, error)
+}
+
 type Conversation interface {
 	ConversationService(conversation_id int) (*models.Conversations, error)
 	ConversationExistService(id1, id2 int) (int, error)
@@ -102,6 +106,7 @@ type Notification interface {
 }
 
 type Service struct {
+	PeopleService
 	Conversation // NEW
 	User
 	Post
@@ -117,16 +122,17 @@ type Service struct {
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
-		Conversation: messanger.NewMessangerService(repo), // NEW
-		User:         user.NewUserService(repo.User),
-		Post:         post.NewPostService(repo),
-		Comment:      comment.NewCommentService(repo.Comment),
-		Session:      session.NewSessionService(repo.Session),
-		Category:     category.NewCategoryService(repo),
-		PostVote:     postvote.NewPostVoteService(repo.PostVote),
-		CommentVote:  commentvote.NewCommentVoteService(repo.CommentVote),
-		Image:        image.NewImageService(repo.Image),
-		Report:       report.NewReportService(repo),
-		Notification: notification.NewNoticService(repo),
+		PeopleService: messanger.NewChatsService(repo),
+		Conversation:  messanger.NewMessangerService(repo), // NEW
+		User:          user.NewUserService(repo.User),
+		Post:          post.NewPostService(repo),
+		Comment:       comment.NewCommentService(repo.Comment),
+		Session:       session.NewSessionService(repo.Session),
+		Category:      category.NewCategoryService(repo),
+		PostVote:      postvote.NewPostVoteService(repo.PostVote),
+		CommentVote:   commentvote.NewCommentVoteService(repo.CommentVote),
+		Image:         image.NewImageService(repo.Image),
+		Report:        report.NewReportService(repo),
+		Notification:  notification.NewNoticService(repo),
 	}
 }

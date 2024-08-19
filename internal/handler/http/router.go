@@ -1,6 +1,5 @@
 package http
 
-
 import "net/http"
 
 func (h *Handler) InitRouters() http.Handler {
@@ -52,10 +51,17 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.Handle("/admin/moderator-request", h.authUser(h.authAdmin(http.HandlerFunc(h.adminModeratorRequestPATCH))))
 
 	// websocket
-	mux.Handle("/chats", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversations)))         // THIS HANDLER
-	mux.Handle("/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversation)))           // THIS HANDLER
-	mux.Handle("/ws/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.InitialConversation))) // wEBSOCKET                                    // THINK
+	mux.Handle("/ws/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.InitialConversation))) // WEBSOCKET
+	mux.Handle("/ws/chats", h.authUser(http.HandlerFunc(h.WebSocketHandler.StreamChats)))        // WEBSOCKET
+
+	mux.Handle("/people", h.authUser(http.HandlerFunc(h.WebSocketHandler.ListOfUsers)))         // THIS HANDLER
+	mux.Handle("/people-add", h.authUser(http.HandlerFunc(h.WebSocketHandler.AddUserChats)))    // THIS HANDLER
+	mux.Handle("/people-check", h.authUser(http.HandlerFunc(h.WebSocketHandler.NowChatCreate))) // THIS HANDLER
+
+	mux.Handle("/chats", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversations))) // THIS HANDLER
+	mux.Handle("/chat", h.authUser(http.HandlerFunc(h.WebSocketHandler.Conversation)))   // THIS HANDLER
+
+	// THINK
 
 	return h.recoverPanic(h.secureHeaders(h.sessionMiddleware(h.limit(5, 5, mux))))
 }
-                                       

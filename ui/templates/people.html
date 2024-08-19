@@ -1,0 +1,81 @@
+{{template "base" .}}
+
+<section>
+    <h2>People You Can Chat With</h2>
+    <div class="people-list">
+        <table>
+            <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .People}}
+            <tr>
+                <td>{{.UserID}}</td>
+                <td>{{.Name}}</td>
+                <td>
+                    <button class="add-user-btn" data-user-id="{{.UserID}}">Add User</button>
+                    <button class="start-chat-btn" data-user-id="{{.UserID}}">Start Chat</button>
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('.add-user-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var userId = this.getAttribute('data-user-id');
+            fetch('/people-add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ event: "HAHAHEHE",data: {
+                           user_id: parseInt(userId,10)
+                    }
+                })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/people';
+                } else {
+                    console.error('Failed to add user.');
+                }
+            })
+                .catch(error => console.error('Error:', error));
+        });
+    })
+
+    document.querySelectorAll('.start-chat-btn').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var userId = this.getAttribute('data-user-id');
+            let consumer = parseInt(userId, 10)
+            fetch('/people-check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ event: "HAHAHEHE",data: {
+                        user_id: consumer
+                    }
+                })
+            }).then(response => {
+                return response.json();  // Parse the JSON response
+            }).then(data => {
+                if (data.ok) {
+                    let conversation_id = data.conversation_id;
+                    console.log("Conversation ID:", conversation_id);
+                    window.location.href = '/chat?id=' + conversation_id;
+                } else {
+                    console.error('Failed to connect to the chat.');
+                }
+            }).catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+{{template "footer" .}}

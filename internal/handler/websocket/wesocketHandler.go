@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"encoding/json"
 	"fmt"
 	"forum/config"
 	"forum/internal/models"
@@ -14,20 +15,23 @@ import (
 )
 
 type WebSocketHandler struct {
-	service           *service.Service
-	template          *template.Template
-	googleConfig      config.GoogleConfig
-	githubConfig      config.GithubConfig
-	activeConnections map[int]*websocket.Conn // NEW
+	service                *service.Service
+	template               *template.Template
+	googleConfig           config.GoogleConfig
+	githubConfig           config.GithubConfig
+	activeConnections      map[int]*websocket.Conn // NEW
+	activeChatsConnections map[int]*websocket.Conn
 }
 
 func NewWebHandler(service *service.Service, tpl *template.Template, googleCfg config.GoogleConfig, githubCfg config.GithubConfig) *WebSocketHandler {
 	return &WebSocketHandler{
-		service:           service,
-		template:          tpl,
-		googleConfig:      googleCfg,
-		githubConfig:      githubCfg,
-		activeConnections: make(map[int]*websocket.Conn), // NEW
+		service:                service,
+		template:               tpl,
+		googleConfig:           googleCfg,
+		githubConfig:           githubCfg,
+		activeConnections:      make(map[int]*websocket.Conn), // NEW
+		activeChatsConnections: make(map[int]*websocket.Conn), // NEW
+
 	}
 }
 
@@ -37,6 +41,13 @@ func (wsh *WebSocketHandler) add(user_id int, conn *websocket.Conn) {
 
 func (wsh *WebSocketHandler) remove(user_id int) {
 	delete(wsh.activeConnections, user_id)
+}
+func (wsh *WebSocketHandler) addChats(user_id int, conn *websocket.Conn) {
+	wsh.activeChatsConnections[user_id] = conn /// BLY
+}
+
+func (wsh *WebSocketHandler) removeChats(user_id int) {
+	delete(wsh.activeChatsConnections, user_id) ////
 }
 
 func (wsh *WebSocketHandler) renderError(w http.ResponseWriter, code int) {
@@ -94,4 +105,14 @@ func getUserFromContext(r *http.Request) *models.User {
 		return nil
 	}
 	return user
+}
+
+func WriteJSON(w http.ResponseWriter, status int, v any) error {
+	w.WriteHeader(status)
+	w.Header().Add("Content-Type", "application/json")
+	return json.NewEncoder(w).Encode(v)
+}
+
+type RESP struct {
+	Ok bool `json:"ok"`
 }

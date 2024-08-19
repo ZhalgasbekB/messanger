@@ -767,3 +767,64 @@ footer {
   background-color: #18d000;
   color: #ffffff;
 }
+#close-chat-button {
+  background-color: #ff0000; /* Red background color */
+  color: #ffffff; /* White text color */
+  padding: 10px 20px; /* Padding for the button */
+  border: 1px solid #7e7e7e76; /* Border color to match the theme */
+  border-radius: 5px; /* Slightly rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size to match other buttons */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+}
+
+#close-chat-button:hover {
+  background-color: #cc0000; /* Darker red background on hover */
+  color: #ffffff; /* White text color on hover */
+}
+
+.people-list {
+  margin-top: 20px;
+  background-color: #0f2b46;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #7e7e7e76;
+}
+
+.people-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.people-list th,
+.people-list td {
+  padding: 12px;
+  border-bottom: 1px solid #ffffff57;
+  text-align: left;
+  color: #ffffff;
+}
+
+.people-list th {
+  background-color: #1f3b56;
+  color: #ffffff;
+}
+
+.people-list td {
+  background-color: #0f2b46;
+  color: #ffffff;
+}
+
+.people-list td a.button {
+  background-color: #21ff00;
+  color: #0f2b46;
+  padding: 8px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  border: 1px solid #7e7e7e76;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.people-list td a.button:hover {
+  background-color: #18d000;
+  color: #ffffff;
+}

@@ -14,8 +14,10 @@ func NewMesssangerSqlite(db *sql.DB) *MessangerSqlite {
 }
 
 const (
-	conversationCreateQuery   = "INSERT INTO conversations (user_id_1, user_id_2, create_at) VALUES (?, ?, ?);"
-	conversationAllQuery      = "SELECT * FROM conversations WHERE user_id_1 = ? OR user_id_2 = ?;"
+	conversationCreateQuery = "INSERT INTO conversations (user_id_1, user_id_2, created_at) VALUES (?, ?, ?);"
+	conversationAllQuery    = "SELECT * FROM conversations WHERE user_id_1 = ? OR user_id_2 = ?;"
+	ALL                     = "SELECT c.id AS conversation_id,  c.user_id_1,  c.user_id_2,   m.message,   m.created_at FROM  conversations c  INNER JOIN      (SELECT  conversation_id,   MAX(created_at) AS last_message_time  FROM     messages  GROUP BY         conversation_id) lm   ON c.id = lm.conversation_id  INNER JOIN      messages m      ON c.id = m.conversation_id AND m.created_at = lm.last_message_time  WHERE    c.user_id_1 = ? OR c.user_id_2 = ? ORDER BY  m.created_at DESC;"
+
 	conversationsHistoryQuery = "SELECT id, conversation_id, user_id_sender, message, created_at FROM messages WHERE conversation_id = ?;"
 	sendMessaeegQuery         = "INSERT INTO messages (conversation_id, user_id_sender, message, created_at) VALUES (?, ?, ?, ?);"
 	conversationQuery         = "SELECT * FROM conversations WHERE id= ?;"
@@ -48,14 +50,14 @@ func (m *MessangerSqlite) ConversationCreate(conversation *models.Conversations)
 
 func (m *MessangerSqlite) Conversations(user_id int) ([]*models.Conversations, error) {
 	var conversations []*models.Conversations
-	rows, err := m.db.Query(conversationAllQuery, user_id, user_id)
+	rows, err := m.db.Query(ALL, user_id, user_id)
 	if err != nil {
 		return nil, err
 	}
 
 	for rows.Next() {
 		conversation := new(models.Conversations)
-		if err := rows.Scan(&conversation.ID, &conversation.UserID1, &conversation.UserID2, &conversation.CreatedAt); err != nil {
+		if err := rows.Scan(&conversation.ID, &conversation.UserID1, &conversation.UserID2, &conversation.LastMessage, &conversation.CreatedAt); err != nil {
 			return nil, err
 		}
 		conversations = append(conversations, conversation)

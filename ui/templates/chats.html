@@ -9,15 +9,17 @@
           <th>User 1</th>
           <th>User 2</th>
           <th>Started At</th>
+          <th>Last Message</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {{range .Conversations}}
-        <tr>
+        <tr data-conversation-id="{{.ID}}">
           <td>{{.UserID1}}</td>
           <td>{{.UserID2}}</td>
           <td>{{.CreatedAt}}</td>
+          <td class="last-message-cell">{{.LastMessage}}</td>
           <td><a href="/chat?id={{.ID}}" class="button">Go to Chat</a></td>
         </tr>
         {{end}}
@@ -25,5 +27,42 @@
     </table>
   </div>
 </section>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+  const ws2 = new WebSocket("ws://localhost:8080/ws/chats");
+
+
+    ws2.onmessage = function(event) {
+    const update = JSON.parse(event.data);
+    if (update.data.status) {
+      updateChatList( update.data.conversation_id , update.data.last_message );
+    }
+  };
+
+
+    const updateChatList = (conversationID, lastMessage) => {
+    const chatRow = document.querySelector(`tr[data-conversation-id="${conversationID}"]`);
+    if (chatRow) {
+      const messageCell = chatRow.querySelector('.last-message-cell');
+      if (messageCell) {
+        messageCell.textContent = lastMessage;
+      }
+    }
+  };
+    ws2.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws2.onclose = (event) => {
+      if (event.code === 1001) {
+        console.log('WebSocket connection closed: Going away (Code 1001)');
+      } else {
+        console.error('WebSocket connection closed unexpectedly:', event);
+      }
+    };
+
+  })
+</script>
 
 {{template "footer" .}}

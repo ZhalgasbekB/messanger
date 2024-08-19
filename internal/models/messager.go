@@ -14,7 +14,9 @@ type Conversations struct {
 	ID        int       `json:"id"`
 	UserID1   int       `json:"user_id_1"`
 	UserID2   int       `json:"user_id_2"`
-	CreatedAt time.Time `json:created_at"`
+	CreatedAt time.Time `json:"created_at"`
+
+	LastMessage string `json:"last_message"`
 }
 
 type ConversationDTO struct {

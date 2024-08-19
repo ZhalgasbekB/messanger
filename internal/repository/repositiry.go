@@ -20,6 +20,9 @@ import (
 
 // WEBSOCKET
 // ?????
+type People interface {
+	ListOfUsersToChat() (*[]models.User, error)
+}
 type Conversation interface {
 	Conversation1(conversation_id int) (*models.Conversations, error)
 	ConversationExist(id1, id2 int) (int, error)
@@ -112,6 +115,7 @@ type Notification interface {
 }
 
 type Repository struct {
+	People       // NEW
 	Conversation // NEW
 	User
 	Post
@@ -127,6 +131,7 @@ type Repository struct {
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
+		People:       messanger.NewChatsSqlite(db),
 		Conversation: messanger.NewMesssangerSqlite(db), // NEW WEBSOCKET
 		User:         user.NewUserSqlite(db),
 		Post:         post.NewPostSqlite(db),

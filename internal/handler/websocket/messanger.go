@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/internal/models"
 	"log"
 	"net/http"
@@ -25,7 +26,6 @@ func (wsh *WebSocketHandler) InitialConversation(w http.ResponseWriter, r *http.
 	}
 
 	user := getUserFromContext(r)
-
 	go wsh.handleConnection(ws, user.Id)
 }
 
@@ -36,6 +36,21 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 	}()
 	wsh.add(id, conn)
 
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				if err := conn.WriteJSON(&Event{Event: "Ping"}); err != nil {
+					log.Println(err)
+					return
+				}
+			}
+		}
+	}()
+
 	for {
 		var messages *models.MessangerDTO
 		if err := conn.ReadJSON(&messages); err != nil {
@@ -44,10 +59,15 @@ func (wsh *WebSocketHandler) handleConnection(conn *websocket.Conn, id int) {
 		}
 
 		switch messages.Event {
+		case "closeConnection":
+			fmt.Println("Connection Closed")
+			break
 		case "initiateConversation":
 			wsh.connectionChat(conn, id, messages.Data.RecipientID)
 		case "sendMessage":
-			wsh.sendMessage(conn, *messages, id)
+			wsh.sendMessage(*messages, id)
+		case "Pong":
+			log.Println("Pong received: ", time.Now())
 		}
 	}
 }
@@ -77,7 +97,7 @@ func (wsh *WebSocketHandler) connectionChat(conn *websocket.Conn, id int, re_id 
 	}
 }
 
-func (wsh *WebSocketHandler) sendMessage(conn *websocket.Conn, m models.MessangerDTO, sender int) {
+func (wsh *WebSocketHandler) sendMessage(m models.MessangerDTO, sender int) {
 	message := models.Messanger{
 		ConversationID: m.Data.ConversationID,
 		UserIDSender:   sender,
@@ -96,10 +116,10 @@ func (wsh *WebSocketHandler) sendMessage(conn *websocket.Conn, m models.Messange
 		return
 	}
 
-	wsh.broadcastingMessages(conn, conversation, &message)
+	wsh.broadcastingMessages(conversation, &message)
 }
 
-func (wsh *WebSocketHandler) broadcastingMessages(conn *websocket.Conn, mm *models.Conversations, message *models.Messanger) {
+func (wsh *WebSocketHandler) broadcastingMessages(mm *models.Conversations, message *models.Messanger) {
 	if toUserConn, ok := wsh.activeConnections[mm.UserID1]; ok {
 		messageToUser := &models.MessangerDTO1{
 			Event: "newMessage",
@@ -187,4 +207,8 @@ func (wsh *WebSocketHandler) Conversations(w http.ResponseWriter, r *http.Reques
 		User:          user,
 		Conversations: chats,
 	})
+}
+
+type Event struct {
+	Event string `json:"event"`
 }
